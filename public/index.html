@@ -8,222 +8,128 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/style.css">
 <style>
-/* Layout: lab bench. Grid-paper ground, a specimen rack of experiment cards, filter rail on top. */
-:root{
-  --bg:#EDF0EC; --grid:#DCE2DB; --panel:#F8FAF6; --ink:#16201C; --muted:#5B6862; --line:#C9D1C8;
-  --accent:#2C47E8; --accent-ink:#FFFFFF;
-  --s-running:#1F8A55; --s-paused:#B7791F; --s-shipped:#2C47E8; --s-archived:#7A837E;
-  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
-  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0F1513; --grid:#18201D; --panel:#151D1A; --ink:#E3EAE5; --muted:#93A099; --line:#2A3631;
-  --accent:#8E9DFF; --accent-ink:#0F1513;
-  --s-running:#4FC98A; --s-paused:#E3AE55; --s-shipped:#8E9DFF; --s-archived:#89938E; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0F1513; --grid:#18201D; --panel:#151D1A; --ink:#E3EAE5; --muted:#93A099; --line:#2A3631;
-  --accent:#8E9DFF; --accent-ink:#0F1513;
-  --s-running:#4FC98A; --s-paused:#E3AE55; --s-shipped:#8E9DFF; --s-archived:#89938E; color-scheme:dark}
+.hero{display:flex;flex-direction:column;gap:26px;padding-block:clamp(24px,7vw,72px)}
+.log{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.log .bar{flex:1;min-width:40px;height:1px;background:var(--line)}
+.log b{color:var(--accent);font-weight:600}
 
-*{box-sizing:border-box}
-img{max-width:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:24px 24px;}
-.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:40px 64px;display:flex;flex-direction:column;gap:36px}
-
-header{display:grid;gap:14px}
-.domain{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.04em}
-.domain b{color:var(--accent);font-weight:600}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,8vw,84px);line-height:.95;letter-spacing:-.03em;margin:0;text-wrap:balance}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,11vw,118px);line-height:.9;
+  letter-spacing:-.035em;margin:0;text-wrap:balance}
 h1 .flask{color:var(--accent)}
-.lede{max-width:60ch;margin:0;color:var(--muted);font-size:17px}
-.bench-stats{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
-.bench-stats span b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 
-.rail{display:flex;flex-direction:column;gap:14px;position:sticky;top:env(safe-area-inset-top,0px);z-index:2;
-  background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line)}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:500 13.5px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);
-  border-radius:999px;padding:7px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
-.chip .n{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.chip[aria-pressed="true"] .n{color:var(--accent-ink);opacity:.8}
-.chip:focus-visible,.search:focus-visible,.card a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.search{font:400 14px var(--body);color:var(--ink);background:var(--panel);border:1px solid var(--line);
-  border-radius:8px;padding:9px 12px;width:100%;max-width:340px}
+.statement{max-width:54ch;margin:0;font-size:clamp(17px,2.4vw,21px);line-height:1.5;color:var(--ink)}
+.statement .dim{color:var(--muted)}
 
-.rack{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;display:flex;flex-direction:column;min-width:0;position:relative}
-.label{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px dashed var(--line);
-  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.status{display:inline-flex;align-items:center;gap:6px;color:var(--st)}
-.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--st)}
-.status.running::before{animation:pulse 2.4s ease-in-out infinite}
-@keyframes pulse{50%{opacity:.35}}
-@media (prefers-reduced-motion:reduce){.status.running::before{animation:none}}
-.body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
-.cat{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.04em}
-.card h3{font-family:var(--display);font-weight:800;font-size:23px;line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
-.card p{margin:0;color:var(--muted);font-size:14.5px}
-.q{font-size:14px;border-left:2px solid var(--line);padding-left:10px;color:var(--ink)}
-.q i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);display:block;letter-spacing:.06em;text-transform:uppercase}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
-.tag{font-family:var(--mono);font-size:11.5px;padding:3px 8px;border-radius:3px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
-.foot{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-size:13px}
-.foot a{color:var(--accent);font-weight:600;text-decoration:none}
-.foot a:hover{text-decoration:underline}
-.foot .none{color:var(--muted);font-family:var(--mono);font-size:12px}
+/* instrument readout */
+.readout{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
+.readout div{flex:1 1 120px;padding:14px 18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.readout div:last-child{border-right:0}
+.readout b{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.readout span{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 
-.slot{border:1.5px dashed var(--line);border-radius:4px;padding:22px 18px;display:flex;flex-direction:column;gap:6px;justify-content:center;color:var(--muted);min-height:180px}
-.slot strong{font-family:var(--display);font-size:20px;color:var(--ink)}
-.slot code{font-family:var(--mono);font-size:12px}
+/* entry doors */
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+.door{display:flex;flex-direction:column;gap:6px;padding:20px;border:1px solid var(--line);border-radius:4px;
+  background:var(--panel);text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s}
+.door:hover{border-color:var(--accent);transform:translateY(-2px)}
+.door strong{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em}
+.door span{color:var(--muted);font-size:14px}
+.door em{font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.06em}
+@media (prefers-reduced-motion:reduce){.door:hover{transform:none}}
 
-footer{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+/* running strip */
+.strip{border-top:1px dashed var(--line);padding-top:16px;display:flex;flex-direction:column;gap:9px}
+.strip h2{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin:0;font-weight:400}
+.strip ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.strip li{display:flex;align-items:baseline;gap:12px;font-family:var(--mono);font-size:13px;flex-wrap:wrap}
+.strip .id{color:var(--muted);font-size:11.5px}
+.strip .name{font-family:var(--body);font-size:15px;font-weight:500;color:var(--ink)}
+.strip .live{display:inline-flex;align-items:center;gap:6px;color:var(--s-running);font-size:11px;
+  letter-spacing:.06em;text-transform:uppercase}
+.strip .live::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.strip .live::before{animation:none}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <header>
-    <div class="domain"><b>daveeexperiments</b>.xyz / lab index</div>
+
+  <nav class="nav">
+    <a class="mark" href="/"><span class="dot"></span> daveeexperiments.xyz</a>
+    <ul>
+      <li><a class="link" href="/" aria-current="page">Index</a></li>
+      <li><a class="link" href="/lab">The lab</a></li>
+      <li><a class="link" href="/about">About</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero">
+    <div class="log"><span>Lab log</span><span class="bar"></span><span>Status <b>open</b></span></div>
+
     <h1>Davee Experiments<span class="flask">.</span></h1>
-    <p class="lede">The lab where I test ideas. Games, tools, engine plugins and AI experiments, filed as they happen. Some ship. Some don't. Both get written up.</p>
-    <div class="bench-stats" id="stats"></div>
-  </header>
 
-  <div class="rail">
-    <div class="chips" id="chips" role="toolbar" aria-label="Filter by category"></div>
-    <input class="search" id="q" type="search" placeholder="Search experiments, tools, stacks" aria-label="Search">
-  </div>
+    <p class="statement">I build games and the tools that make them. This site is the bench I work on, not a portfolio.
+      <span class="dim">Every project here is filed as an experiment with a question attached. Some ship. Some don't. Both get written up.</span></p>
 
-  <main class="rack" id="rack" aria-live="polite"></main>
+    <div class="readout" id="readout"></div>
+
+    <div class="doors">
+      <a class="door" href="/lab">
+        <em>→ Open</em>
+        <strong>The lab</strong>
+        <span>Every experiment on the bench, filed by shelf. Filter, search, dig around.</span>
+      </a>
+      <a class="door" href="/about">
+        <em>→ Read</em>
+        <strong>About</strong>
+        <span>Who's running the lab, and what I actually make.</span>
+      </a>
+    </div>
+
+    <div class="strip">
+      <h2>Currently running</h2>
+      <ol id="running"></ol>
+    </div>
+  </main>
 
   <footer>
     <span>David Olamide · Dimension11 Studios · Lisbon / Lagos</span>
-    <span id="updated"></span>
+    <span class="social">
+      <a href="https://github.com/daveeexperiments" rel="me noopener" target="_blank">GitHub</a>
+      <!-- Add your other links here as you get them, same shape:
+      <a href="https://YOURNAME.itch.io" rel="me noopener" target="_blank">itch.io</a>
+      <a href="https://www.linkedin.com/in/YOURNAME" rel="me noopener" target="_blank">LinkedIn</a>
+      <a href="mailto:you@example.com">Email</a> -->
+    </span>
   </footer>
+
 </div>
 
+<script src="/experiments.js"></script>
 <script>
-/* ===== Add new work here. One object per experiment. =====
-   category: one of the keys in CATEGORIES below
-   status:   running | paused | shipped | archived
-   link:     URL string, or "" if nothing public yet           */
-const CATEGORIES = {
-  games:   "Games",
-  itch:    "itch.io",
-  tools:   "Tools",
-  ai:      "AI Experiments",
-  plugins: "Engine Plugins"
-};
-
-const EXPERIMENTS = [
-  {
-    id:"EXP-001", title:"Slingshot Ball Platformer", category:"games", status:"running", date:"2026-10",
-    question:"Can switching a ball's material carry a whole precision platformer?",
-    blurb:"Vertical climber. Slingshot the ball, swap between squishy and rocky mid-flight, and pick which walls you can smash through.",
-    tags:["Godot 4.7","Phaser","TypeScript","Tiled"], link:""
-  },
-  {
-    id:"EXP-002", title:"Mushrealm", category:"games", status:"running", date:"2026-10",
-    question:"How much strategy fits in a three-faction tabletop card game?",
-    blurb:"A tabletop card game of Trees, Beasts and Mushrooms. Trailer in the works.",
-    tags:["Tabletop","Card game"], link:""
-  },
-  {
-    id:"EXP-003", title:"Legends of Orisha: Blood and Water", category:"games", status:"running", date:"2027",
-    question:"What does a Yoruba-myth action-adventure feel like in UE5?",
-    blurb:"Dimension11's flagship. Third-person action-adventure rooted in Yoruba mythology, built with ID@Xbox.",
-    tags:["Unreal Engine 5","C++","GAS"], link:""
-  },
-  {
-    id:"EXP-004", title:"Companion Spline System", category:"plugins", status:"running", date:"2026",
-    question:"Can designers author companion movement just by drawing splines?",
-    blurb:"Spline-driven companion AI with editor tooling and a custom teleport node that pulls targets from a data table.",
-    tags:["UE5","C++","Editor module","K2Node"], link:""
-  },
-  {
-    id:"EXP-005", title:"Proudly Skilled", category:"tools", status:"shipped", date:"2026",
-    question:"Can one static file run a four-page site with clean routing?",
-    blurb:"Professional development platform site. Single self-contained page with hash routing, deployed on static hosting.",
-    tags:["HTML","CSS","JavaScript"], link:""
-  }
-];
-
-/* ===== Rendering ===== */
 const $ = s => document.querySelector(s);
-const STATUS_VAR = {running:"--s-running",paused:"--s-paused",shipped:"--s-shipped",archived:"--s-archived"};
-let active = "all";
-try{ const saved = localStorage.getItem("dx-filter"); if(saved && (saved==="all"||CATEGORIES[saved])) active = saved; }catch(e){}
-
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
-function renderStats(){
-  const by = s => EXPERIMENTS.filter(e=>e.status===s).length;
-  $("#stats").innerHTML =
-    `<span><b>${EXPERIMENTS.length}</b> filed</span>
-     <span><b>${by("running")}</b> running</span>
-     <span><b>${by("shipped")}</b> shipped</span>
-     <span><b>${Object.keys(CATEGORIES).length}</b> shelves</span>`;
-}
+const running = EXPERIMENTS.filter(e => e.status === "running");
+const shelvesInUse = new Set(EXPERIMENTS.map(e => e.category)).size;
 
-function renderChips(){
-  const all = [["all","Everything",EXPERIMENTS.length],
-    ...Object.entries(CATEGORIES).map(([k,v])=>[k,v,EXPERIMENTS.filter(e=>e.category===k).length])];
-  $("#chips").innerHTML = all.map(([k,v,n]) =>
-    `<button class="chip" data-k="${k}" aria-pressed="${k===active}">${esc(v)} <span class="n">${n}</span></button>`).join("");
-}
+$("#readout").innerHTML =
+  `<div><b>${EXPERIMENTS.length}</b><span>Filed</span></div>
+   <div><b>${running.length}</b><span>Running</span></div>
+   <div><b>${EXPERIMENTS.filter(e=>e.status==="shipped").length}</b><span>Shipped</span></div>
+   <div><b>${shelvesInUse}/${Object.keys(CATEGORIES).length}</b><span>Shelves in use</span></div>`;
 
-function card(e){
-  const st = STATUS_VAR[e.status] || "--s-archived";
-  return `<article class="card">
-    <div class="label"><span>${esc(e.id)} · ${esc(e.date)}</span>
-      <span class="status ${esc(e.status)}" style="--st:var(${st})">${esc(e.status)}</span></div>
-    <div class="body">
-      <span class="cat">${esc(CATEGORIES[e.category]||e.category)}</span>
-      <h3>${esc(e.title)}</h3>
-      <p>${esc(e.blurb)}</p>
-      ${e.question?`<div class="q"><i>Testing</i>${esc(e.question)}</div>`:""}
-      <div class="tags">${e.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>
-    </div>
-    <div class="foot">${e.link
-      ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">Open experiment →</a>`
-      : `<span class="none">No public build yet</span>`}</div>
-  </article>`;
-}
-
-function slot(name){
-  return `<div class="slot"><strong>${esc(name)} shelf is empty</strong>
-    <span>Nothing filed here yet. Add an entry with <code>category</code> set to this shelf.</span></div>`;
-}
-
-function render(){
-  const q = $("#q").value.trim().toLowerCase();
-  let list = EXPERIMENTS.filter(e => active==="all" || e.category===active);
-  if(q) list = list.filter(e => [e.title,e.blurb,e.question,CATEGORIES[e.category],...e.tags].join(" ").toLowerCase().includes(q));
-  let html = list.map(card).join("");
-  if(!q){
-    const empties = Object.entries(CATEGORIES).filter(([k])=>(active==="all"||active===k) && !EXPERIMENTS.some(e=>e.category===k));
-    html += empties.map(([,v])=>slot(v)).join("");
-  }
-  if(!html) html = `<div class="slot"><strong>No matches</strong><span>Try a different word or switch back to Everything.</span></div>`;
-  $("#rack").innerHTML = html;
-}
-
-$("#chips").addEventListener("click", ev=>{
-  const b = ev.target.closest(".chip"); if(!b) return;
-  active = b.dataset.k;
-  try{ localStorage.setItem("dx-filter", active); }catch(e){}
-  renderChips(); render();
-});
-$("#q").addEventListener("input", render);
-
-$("#updated").textContent = "Index updated Oct 2026";
-renderStats(); renderChips(); render();
+$("#running").innerHTML = running.length
+  ? running.map(e => `<li>
+      <span class="id">${esc(e.id)}</span>
+      <span class="name">${esc(e.title)}</span>
+      <span class="live">live</span>
+    </li>`).join("")
+  : `<li><span class="id">Nothing on the bench right now.</span></li>`;
 </script>
 
 </body>
