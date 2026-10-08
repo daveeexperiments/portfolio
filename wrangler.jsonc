@@ -1,0 +1,8 @@
+{
+  // Static site. Everything in ./public is served as-is, no build step.
+  "name": "portfolio",
+  "compatibility_date": "2026-10-08",
+  "assets": {
+    "directory": "./public"
+  }
+}
